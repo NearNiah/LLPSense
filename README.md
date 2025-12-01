@@ -94,8 +94,8 @@ Run the following scripts to process the raw file and extract features.
 Choose one of the following options based on your task.
 
 **Option A: Standard Processing (For Prediction/Training)**
-Converts raw `.xlsx` data to `.npz` format for general tasks. We use this preprocessing pipeline for [A. Evaluation](#a-evaluate-model-performance), [B. Prediction of LLPS](#b-predict-llps-probability), and [C. Condition Screening](#c-condition-screening).
-The xlsx file should be located in data/raw/
+Converts raw `.xlsx` data to `.npz` format for general tasks. The xlsx file should be located in `data/raw`. We use this preprocessing pipeline for [A. Evaluation](#a-evaluate-model-performance), [B. Prediction of LLPS](#b-predict-llps-probability), and [C. Condition Screening](#c-condition-screening).
+
 ```bash
 python -m preprocess.process_db --srcfilename=Data_template.xlsx
 ```
