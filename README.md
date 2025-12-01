@@ -94,7 +94,7 @@ Run the following scripts to process the raw file and extract features.
 Choose one of the following options based on your task.
 
 **Option A: Standard Processing (For Prediction/Training)**
-Converts raw `.xlsx` data to `.npz` format for general tasks. The xlsx file should be located in `data/raw`. We use this preprocessing pipeline for [A. Evaluation](#a-evaluate-model-performance), [B. Prediction of LLPS](#b-predict-llps-probability), and [C. Condition Screening](#c-condition-screening).
+Converts raw `.xlsx` data to `.npz` format for general tasks. The `.xlsx` file should be located in `data/raw`. We use this preprocessing pipeline for [A. Evaluation](#a-evaluate-model-performance), [B. Prediction of LLPS](#b-predict-llps-probability), and [C. Condition Screening](#c-condition-screening).
 
 ```bash
 python -m preprocess.process_db --srcfilename=Data_template.xlsx
@@ -110,6 +110,7 @@ python -m preprocess.process_mut --srcfilename=Data_template.xlsx
 
 #### Step 2: Extract Features
 Extract [ProtTrans (T5)](https://github.com/agemagician/ProtTrans) embeddings or engineered features.
+
 For Language Model features (T5):
 ```bash
 python -m preprocess.extract_feat --feature_type=t5 --srcfilename=Data_template.npz
@@ -140,6 +141,7 @@ python LLPSense_standalone.py standalone.exp_task=test data.test_file=data/proce
 
 #### B. Predict LLPS probability
 Predicts scores for new proteins/conditions (no labels required). We used this function to predict LLPS probability given proteins under specified condition.
+* Specify `data.test_file`.
 ```bash
 python LLPSense_standalone.py standalone.exp_task=predict data.test_file=data/processed/Data_template.npz expname=predict_template
 ```
@@ -147,6 +149,7 @@ python LLPSense_standalone.py standalone.exp_task=predict data.test_file=data/pr
 #### C. Condition Screening
 Screens LLPS behavior across a range of conditions (e.g., Temp, pH, Salt). We used this function for screening phase separating candidates and condition-dependency profiling.
 * Change `standalone.screen` to `temp`, `conc`, `pH`, or `nacl`.
+* Specify `data.screen_file`.
 * (Optional) Modify base conditions in `preprocess/misc.py` (`base_cond_screen`).
 
 Example: Screening temperature dependence
@@ -156,6 +159,7 @@ python LLPSense_standalone.py standalone.exp_task=screen standalone.screen=temp 
 
 #### D. Mutation Mapping
 Maps the predicted LLPS probabilities of single-point mutations. We used this function for predicting LLPS probability of α-synuclein variants.
+* Specify `data.mut_file`.
 ```bash
 python LLPSense_standalone.py standalone.exp_task=mut data.mut_file=data/processed/Data_template.npz expname=mut_template
 ```
@@ -164,6 +168,7 @@ python LLPSense_standalone.py standalone.exp_task=mut data.mut_file=data/process
 Identifies mutations that result in the **most significant negative shift in the gradient** of LLPS probability with respect to environmental conditions. We used this function to modulate condition-dependent phase behavior of UBQLN4.
 * `standalone.num_mut`: Number of top-ranked single mutations to recommend, selected based on the magnitude of slope change (default: 1).
 * Change `standalone.screen` to `temp`, `conc`, `pH`, or `nacl`.
+* Specify `data.mut_file`.
 * (Optional) Modify base conditions in `preprocess/misc.py` (`base_cond_mutation`).
 
 Example: Mutation screening under temperature gradient
