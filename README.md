@@ -46,7 +46,7 @@ apt-get install -y git nano curl wget unzip cmake tmux gparted htop net-tools ar
 
 # 4. Clone the repository
 cd /workspace
-git clone --recursive https://github.com/NearNiah/LLPSense
+git clone https://github.com/NearNiah/LLPSense
 cd LLPSense
 
 # 5. Install Python requirements
