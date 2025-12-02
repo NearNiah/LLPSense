@@ -136,7 +136,7 @@ python -m preprocess.extract_feat --feature_type=eng --srcfilename=Data_template
 #### A. Evaluate Model Performance
 Predicts scores for labeled data and calculates performance metrics. We used this function to evaluate our model's performance.
 ```bash
-python LLPSense_standalone.py standalone.exp_task=test data.test_file=data/processed/LLPSDB.npz expname=test
+python LLPSense_standalone.py standalone.exp_task=test data.test_file=data/processed/Dataset_test.npz expname=test
 ```
 
 #### B. Predict LLPS probability
