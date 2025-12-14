@@ -4,7 +4,6 @@ This is the official implementation of the paper **"A machine learning framework
 <br>A preprint version of our paper is available on bioRxiv.
 
 [![bioRxiv](https://img.shields.io/badge/bioRxiv-2023.08.23.554541-b31b1b.svg)](https://www.biorxiv.org/content/10.1101/2023.08.23.554541v1)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **Authors:**
 Jangwon Bae<sup>†</sup>, Minjun Kang<sup>†</sup>, Donghyuk Lee, Kuk-Jin Yoon<sup>\*</sup>, and Yongwon Jung<sup>\*</sup>
