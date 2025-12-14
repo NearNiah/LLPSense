@@ -3,6 +3,7 @@
 This is the official implementation of the paper **"A machine learning framework for predicting and modulating condition-dependent protein phase separation"**.
 <br>A preprint version of our paper is available on bioRxiv.
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![bioRxiv](https://img.shields.io/badge/bioRxiv-2023.08.23.554541-b31b1b.svg)](https://www.biorxiv.org/content/10.1101/2023.08.23.554541v1)
 
 **Authors:**
