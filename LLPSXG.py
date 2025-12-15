@@ -275,7 +275,6 @@ def extract_screen(path, screen, seq_length_min=None, feat_type='t5'):
     range_nacl = range(1, 51)
     range_pH = range(61)
     range_book = {'temp': range_temp, 'conc': range_conc, 'nacl': range_nacl, 'pH': range_pH}
-    index_book = {'temp': 0, 'conc': 1, 'nacl': 10, 'pH': 2}
     base_cond = misc.normalize_condition(misc.base_cond_screen)
     scale_value_cond = deepcopy(misc.scale_cond)
     bias_value_cond = deepcopy(misc.bias_cond)
