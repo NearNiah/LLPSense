@@ -365,19 +365,6 @@ def cond_to_metric(cond):
     return cond_out
 
 
-def normalize_cond(cond):
-    cond_out = np.zeros_like(cond)
-    cond_out[:, 0] = cond[:, 0] / misc.max_temp
-    cond_out[:, 1] = cond[:, 1] / misc.max_conc
-    cond_out[:, 2] = cond[:, 2] / misc.max_pH
-    cond_out[:, 3:9] = cond[:, 3:9] / misc.max_cagent
-    cond_out[:, 9] = cond[:, 9] / misc.max_mgcl2
-    cond_out[:, 10] = cond[:, 10] / misc.max_nacl
-    cond_out[:, 11] = cond[:, 11] / misc.max_kcl
-    cond_out[:, 12] = cond[:, 12] / misc.max_glyc
-    return cond_out
-
-
 def check_irregular(calc_results, screen):
     if screen == 'temp':
         search = 60
