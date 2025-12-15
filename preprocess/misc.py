@@ -38,8 +38,8 @@ base_cond_screen = {
 
 base_cond_mutation = {
     'temp': 25.0,   # degree Celsius
-    'conc': 10.0,   # uM
-    'pH': 7.4,
+    'conc': 100.0,   # uM
+    'pH': 7.3,
     
     'PEG300-1k': 0.0,   # %
     'PEG3k-6k': 0.0,   # %
@@ -49,8 +49,8 @@ base_cond_mutation = {
     'Dextran 70-': 0.0,   # %
     
     'mgcl2': 0.0,   # mM
-    'nacl': 200.0,   # mM
-    'kcl': 3.0,   # mM
+    'nacl': 160.0,   # mM
+    'kcl': 0.0,   # mM
     
     'glyc': 0.0  # %
 }
