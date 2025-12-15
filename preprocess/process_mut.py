@@ -102,6 +102,7 @@ def main(cfg):
         # basic information
         name = data_value[0]
         entry_id, seq = decode_fasta(data_value[1])
+        if 'U' in seq: continue
         
         # process data
         conc = process_data(data_value[2], 'conc')
