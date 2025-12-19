@@ -203,7 +203,7 @@ def main(cfg: DictConfig):
                 # calculate delta score
                 delta = mut_scores[19*i+j] - wt_scores  # shape: (num_sreen)
                 slope_delta = linregress(xvalues, delta)[0]
-                delta_score = -slope_ori * slope_delta  # how much the slope is different from the original
+                delta_score = -slope_ori * slope_delta 
                 
                 if j == 0:
                     delta_high[i] = delta_score
