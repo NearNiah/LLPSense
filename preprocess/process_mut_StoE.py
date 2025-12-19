@@ -7,6 +7,7 @@ import pandas as pd
 from pathlib import Path
 from easydict import EasyDict as edict
 import random
+from copy import deepcopy
 
 
 #### setting ####
@@ -37,6 +38,7 @@ def decode_fasta(fasta_info):
         seq = ''.join([seq_part for seq_part in splitted[0:]])
     return entry_id, seq
 
+
 def get_range_data(minvalue, maxvalue, num_split, num_unit, reverse_order=False, range_limit=False):
     if num_unit == 0:
         bias = (maxvalue - minvalue) / num_split
@@ -53,6 +55,7 @@ def get_range_data(minvalue, maxvalue, num_split, num_unit, reverse_order=False,
         else:
             return values
 
+
 # process ~ data
 def process_data(data, tag):
     if isinstance(data, (float, int)):
@@ -60,10 +63,10 @@ def process_data(data, tag):
     else:
         if tag == 'temp':
             data = data.replace('RT', '25')
-        
-        if '~' in data or '-' in data:  # data with range
-            splitted = data.split('~') if '~' in data else data.split('-')
+        if '~' in data:  # data with range
+            splitted = data.split('~')
             assert(len(splitted) == 2)
+            
             # case 1 : a ~ b
             if not '' in splitted:
                 reverse_order, range_limit = False, False
@@ -94,6 +97,8 @@ def main(cfg):
     filepath = Path(f'data/raw/{cfg.srcfilename}')
     data_array = pd.read_excel(str(filepath), engine='openpyxl').to_numpy()
     protein_info = []
+    
+    seq_idx = 0
     for i in range(len(data_array)):
         data_value = data_array[i]
         
@@ -118,6 +123,12 @@ def main(cfg):
         
         processed_data += [[data_value[15]]]
         processed_data += [[data_value[16]]]
+        if len(data_value) > 17:
+            # find mutated sequence and define static position
+            mut_signs = data_value[17][1:].split(',')
+            static_pos = [int(mut_sign) for mut_sign in mut_signs]
+        else:
+            static_pos = []
         
         # combine all the cases together
         processed_data = list(itertools.product(*processed_data))
@@ -128,13 +139,13 @@ def main(cfg):
     
         # get information
         for data in processed_data:
-            
             # register protein
             protein_dict = edict()
             protein_dict.name = name
             protein_dict.entry_id = entry_id
             protein_dict.seq = seq
-            protein_dict.seq_id = i
+            protein_dict.seq_id = seq_idx
+            protein_dict.static_pos = static_pos
             
             # get processed information (order aligned with other dataset)
             protein_dict.conc = data[0]
@@ -146,14 +157,28 @@ def main(cfg):
             
             # assign score
             protein_dict.score = data[13]
-            protein_dict.group = data[14]
+            protein_dict.group = i
             
             # save data
             protein_info.append(protein_dict)
             
+            mut_num = 0
+            for mut in range(len(seq)):
+                if seq[mut] == 'S':
+                    protein_dict_mut = deepcopy(protein_dict)
+                    protein_dict_mut.name = name + '_' + seq[mut] + str(mut+1) + 'E'
+                    protein_dict_mut.seq = seq[:mut] + 'E' + seq[mut+1:]
+                    protein_dict_mut.seq_id = seq_idx + mut_num + 1
+                    
+                    # save data
+                    protein_info.append(protein_dict_mut)
+                    mut_num += 1
+                    
+        seq_idx += (mut_num + 1)
+            
             
     # save as npz file
-    output_path = Path(f'data/processed/{filepath.stem}')
+    output_path = Path(f'data/processed/{filepath.stem}_mut')
     np.savez_compressed(output_path, data=protein_info)
     
     

@@ -112,7 +112,12 @@ def save_results(filepath, y_pred_proba, roc_curve_data=None, pr_curve_data=None
                                     'Predicted_Probability': y_pred_proba,
                                     })
     else:
-        df_results = pd.DataFrame({'Predicted_Probability': y_pred_proba})
+        df_results = pd.DataFrame()
+        if name is not None:
+            df_results['Protein_Name'] = name
+        if seq is not None:
+            df_results['Sequence'] = seq
+        df_results['Predicted_Probability'] = y_pred_proba
     
     if y_true is not None:
         df_results['True_Label'] = y_true
@@ -207,7 +212,7 @@ def extract(path, seq_length_min=None, feat_type='t5', use_cond=False):
     if use_cond:
         return np.array(protfeat), np.array(label), np.array(cond_set), np.array(group), name, seq
     else:
-        return np.array(protfeat), np.array(label)
+        return np.array(protfeat), np.array(label), np.array(group), name, seq
     
     
 def extract_mut(path, cond, seq_length_min=None, feat_type='t5'):
@@ -270,12 +275,11 @@ def extract_screen(path, screen, seq_length_min=None, feat_type='t5'):
     protfeat, seq, cond_set, label, group, name = [], [], [], [], [], []
     
     ## change this part ##
-    range_temp = range(1, 61)
-    range_conc = range(1, 501)
-    range_nacl = range(1, 51)
-    range_pH = range(61)
+    range_temp = range(0, 61)  # (1, 61)
+    range_conc = range(0, 51)
+    range_nacl = range(0, 31)
+    range_pH = range(60)
     range_book = {'temp': range_temp, 'conc': range_conc, 'nacl': range_nacl, 'pH': range_pH}
-    index_book = {'temp': 0, 'conc': 1, 'nacl': 10, 'pH': 2}
     base_cond = misc.normalize_condition(misc.base_cond_screen)
     scale_value_cond = deepcopy(misc.scale_cond)
     bias_value_cond = deepcopy(misc.bias_cond)
@@ -309,9 +313,9 @@ def extract_screen_mul(path, screen, seq_length_min=None, feat_type='t5'):
     protfeat, seq, cond_set, label, group, name = [], [], [], [], [], []
     
     ## change this part ##
-    range_temp = range(0, 61)
+    range_temp = range(0, 31)
     range_conc = range(0, 51)
-    range_nacl = range(1, 51)
+    range_nacl = range(0, 31)
     range_pH = range(61)
     range_book = {'temp': range_temp, 'conc': range_conc, 'nacl': range_nacl, 'pH': range_pH}
     base_cond = misc.normalize_condition(misc.base_cond_screen_multiple)
@@ -521,15 +525,29 @@ def draw_screen_graph_mul(xvalue0, xvalue1, prob, screen, filepath, filepath_exc
     if filepath_excel is not None:
         # Add contour at prob = 0.5
         contour = ax.contour(grid_x, grid_y, grid_z, levels=[0.5], colors='red', linestyles='solid')
-
+        segs = contour.allsegs[0]
+        
         # Extract contour data
-        for c in contour.collections:
-            for path in c.get_paths():
-                v = path.vertices
-                x_contour = v[:, 0]
-                y_contour = v[:, 1]
-                df_results = pd.DataFrame({screen[0]: x_contour, screen[1]: y_contour})
-                df_results.to_excel(filepath_excel, index=False)
+        if len(segs) > 0:
+            df_list = []
+            for seg in segs:
+                df_list.append(
+                    pd.DataFrame({
+                        screen[0]: seg[:, 0],
+                        screen[1]: seg[:, 1]
+                    })
+                )
+
+            df_results = pd.concat(df_list, ignore_index=True)
+            df_results.to_excel(filepath_excel, index=False)
+
+        # for c in contour.collections:
+        #     for path in c.get_paths():
+        #         v = path.vertices
+        #         x_contour = v[:, 0]
+        #         y_contour = v[:, 1]
+        #         df_results = pd.DataFrame({screen[0]: x_contour, screen[1]: y_contour})
+        #         df_results.to_excel(filepath_excel, index=False)
     
     plt.close()
     
@@ -571,22 +589,23 @@ def save_mutated_protein(original_filepath, mutated_protein, static_pos):
         
     data = np.load(original_filepath, allow_pickle=True)['data']
     static_pos = [str(pos) for pos in static_pos]
+    base_cond = misc.base_cond_mutation
     
     df_results = pd.DataFrame({'Protein name': [data[0].name],
                             'Sequence': [mutated_protein],
-                            'Conc': [data[0].conc * misc.max_conc],
-                            'pH': [data[0].pH * misc.max_pH],
-                            'temp': [data[0].temp * misc.max_temp],
-                            'MgCl2': [data[0].salt[0] * misc.max_mgcl2],
-                            'NaCl': [data[0].salt[1] * misc.max_nacl],
-                            'KCl': [data[0].salt[2] * misc.max_kcl],
-                            'PEG500': [data[0].cagent[0] * misc.max_cagent],
-                            'PEG3350': [data[0].cagent[1] * misc.max_cagent],
-                            'PEG8000': [data[0].cagent[2] * misc.max_cagent],
-                            'Ficoll 400': [data[0].cagent[3] * misc.max_cagent],
-                            'Dextran 40': [data[0].cagent[4] * misc.max_cagent],
-                            'Dextran 70': [data[0].cagent[5] * misc.max_cagent],
-                            'Glycerol': [data[0].glyc * misc.max_glyc],
+                            'Conc': [base_cond['conc']],
+                            'pH': [base_cond['pH']],
+                            'temp': [base_cond['temp']],
+                            'MgCl2': [base_cond['mgcl2']],
+                            'NaCl': [base_cond['nacl']],
+                            'KCl': [base_cond['kcl']],
+                            'PEG500': [base_cond['PEG300-1k']],
+                            'PEG3350': [base_cond['PEG3k-6k']],
+                            'PEG8000': [base_cond['PEG8k-20k']],
+                            'Ficoll 400': [base_cond['Ficoll']],
+                            'Dextran 40': [base_cond['Dextran -40']],
+                            'Dextran 70': [base_cond['Dextran 70-']],
+                            'Glycerol': [base_cond['glyc']],
                             'label': [data[0].score],
                             'group': [data[0].group],
                             'Mutation Pos': [':' + str(','.join(static_pos))]

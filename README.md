@@ -3,8 +3,7 @@
 This is the official implementation of the paper **"A machine learning framework for predicting and modulating condition-dependent protein phase separation"**.
 <br>A preprint version of our paper is available on bioRxiv.
 
-[![bioRxiv](https://img.shields.io/badge/bioRxiv-2023.08.23.554541-b31b1b.svg)](https://www.biorxiv.org/content/10.1101/2023.08.23.554541v1)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![bioRxiv](https://img.shields.io/badge/bioRxiv-2023.08.23.554541-b31b1b.svg)](https://www.biorxiv.org/content/10.1101/2023.08.23.554541v1)
 
 **Authors:**
 Jangwon Bae<sup>†</sup>, Minjun Kang<sup>†</sup>, Donghyuk Lee, Kuk-Jin Yoon<sup>\*</sup>, and Yongwon Jung<sup>\*</sup>
@@ -15,14 +14,14 @@ Jangwon Bae<sup>†</sup>, Minjun Kang<sup>†</sup>, Donghyuk Lee, Kuk-Jin Yoon
 ---
 
 ## 📖 Abstract
-Protein phase separation is a fundamental process in organizing membraneless organelles and is closely associated with a wide range of pathological conditions, notably neurodegenerative diseases. Crucially, rather than being an intrinsic feature of specific proteins, phase separation is a **condition-dependent phenomenon** governed by environmental parameters, including concentration, temperature, and solvent composition. Yet, most existing machine-learning models infer phase-separation propensity solely from amino-acid sequences, failing to capture these context-dependent behaviors. 
+Protein phase separation is a fundamental process in organizing membraneless organelles and underlies a wide range of pathological conditions. Crucially, rather than being an intrinsic feature of specific proteins, phase separation is a **condition-dependent phenomenon** governed by environmental parameters, including concentration, temperature, and solvent composition. However, most existing machine-learning models infer phase-separation propensity from amino-acid sequences alone, failing to capture these context-dependent behaviors. 
 
 Here, we present **LLPSense**, a machine-learning framework that integrates pre-trained protein language model embeddings with environmental parameters to achieve condition-integrated prediction with substantially improved accuracy. We demonstrate LLPSense's predictive power and applications through multiple experimental validations:
 1.  **Screening and Condition-Dependency Profiling:** Identified novel phase-separating candidates and characterized their distinct condition-dependent landscapes, exemplified by the discovery of SGTA's complex temperature-responsive behavior.
 2.  **Disease Mutation Mapping:** Accurately predicted mutations in α-synuclein that either enhance or suppress phase separation.
 3.  **Rational Engineering:** Inverted the phase behavior of UBQLN4 from high-temperature to low-temperature separation via model-guided mutagenesis.
 
-Collectively, LLPSense provides a robust platform for interrogating the condition-dependent landscape of protein phase separation and offers a valuable tool for the rational engineering of biomolecular condensates.
+Collectively, LLPSense provides a robust platform for interrogating the condition-dependent landscape of protein phase separation and offers a valuable computational tool for mechanistic studies of disease-associated proteins and the rational design of programmable biomolecular condensates. 
 
 ---
 
@@ -178,7 +177,7 @@ python LLPSense_standalone.py standalone.exp_task=mut_screen standalone.screen=t
 If you want to reproduce our UBQLN4 result, you can use our custom script that iteratively mutates protein and modulate condition-dependent phase behavior.
 > **⚠️ Pre-requisite:** You need to first preprocess `UBQLN4.xlsx` in `data/raw` following the [instruction](#-data-preparation-your-own-protein).
 ```bash
-sh ./scripts/mut_screen.sh UBQLN4 3 10  # mutate 10 times and find top-3 single mutations at each time.
+sh ./scripts/mut_screen.sh UBQLN4 10 3  # mutate 3 times and find top-10 single mutations at each time.
 ```
 
 <br>

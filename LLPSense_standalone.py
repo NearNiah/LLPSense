@@ -9,6 +9,7 @@ import LLPSXG as llps
 import itertools
 from copy import deepcopy
 from scipy.stats import linregress
+from sparrow import Protein
 
 root = pyrootutils.setup_root(__file__, dotenv=True, pythonpath=True) 
 
@@ -31,9 +32,12 @@ def main(cfg: DictConfig):
         output = model.evaluate(merged_feature, y_test)
         print(f"Mean Accuracy: {output['accuracy']}, Mean AUROC: {output['roc_auc']}, Mean AUPRC: {output['pr_auc']}")
         llps.save_results(outputs / f"test.xlsx", output['prob'], roc_curve_data=output['roc_curve'], pr_curve_data=output['pr_curve'], cond=test_cond, seq=test_seq, name=test_name, y_true=y_test)
-   
+    
     elif cfg.standalone.exp_task == 'predict':
         x_test, y_test, test_cond, test_group, test_name, test_seq = llps.extract(cfg.data.test_file, seq_length_min=cfg.data.seq_length_min, feat_type=feat_type, use_cond=True)
+        
+        test_cond[:, 5] = 2.5 / 50
+        
         merged_feature = np.concatenate((x_test, test_cond), axis=1)
         output = model.predict_proba(merged_feature)[:, 1]
         llps.save_results(outputs / f"predict.xlsx", output, cond=test_cond, seq=test_seq, name=test_name)
@@ -60,11 +64,13 @@ def main(cfg: DictConfig):
             for i, index in enumerate(indices_prot):
                 if index == len(x_screen): break
                 start_index, end_index = index, indices_prot[i+1]
+                seqname = name_screen[start_index]
                 screen_plots = screen_cond_metric[start_index:end_index]
                 prob_plots = output[start_index:end_index]
+                
                 if apply_smooth:
                     prob_plots = llps.moving_average(prob_plots, window_size=smoothing_window)
-                llps.draw_screen_graph(screen_plots[:, misc.get_cond_index(screen)], prob_plots, screen, outputs / f"{screen}_{i + 1}.png")
+                llps.draw_screen_graph(screen_plots[:, misc.get_cond_index(screen)], prob_plots, screen, outputs / f"{screen}_{seqname}.png")
             
             # save raw data as excel
             llps.save_results(outputs / f"screen_{screen}.xlsx", output, cond=screen_cond, seq=seq_screen, name=name_screen)
@@ -157,6 +163,7 @@ def main(cfg: DictConfig):
         apply_smooth = cfg.data.apply_smooth
         smoothing_window = cfg.data.smoothing_window
         assert isinstance(screen, str)  # only support single screen condition
+        assert cfg.standalone.mut_direction in ['positive', 'negative']
         
         x_mut, y_mut, mut_cond, group_mut, name_mut, seq_mut, static_pos = llps.extract_mut(cfg.data.mut_file, cond=screen, seq_length_min=cfg.data.seq_length_min, feat_type=feat_type)
         merged_feature = np.concatenate((x_mut, mut_cond), axis=1)
@@ -184,12 +191,11 @@ def main(cfg: DictConfig):
         mut_scores = np.stack(mut_scores, axis=0)
                 
         # determine best mutation position
-        valid_mask = np.zeros(seq_len)
-        valid_mask[static_pos] = 1
-        xvalues = np.arange(len(wt_scores))
-        slope_ori = np.sign(linregress(xvalues, wt_scores)[0])
-        delta_high = np.zeros(seq_len)  # fill zero for non mutated position
-        aa_high = np.array(list(original_seq))
+        valid_mask = np.zeros(seq_len, dtype=bool)
+        valid_mask[static_pos] = True
+        xvalues = screen_cond_metric[:len(wt_scores), misc.get_cond_index(screen)]
+        delta_slopes = np.full(seq_len, np.nan)
+        delta_aa = np.array(list(original_seq))
         for i in range(seq_len):
             if i in static_pos: continue
             
@@ -202,22 +208,29 @@ def main(cfg: DictConfig):
                 
                 # calculate delta score
                 delta = mut_scores[19*i+j] - wt_scores  # shape: (num_sreen)
-                slope_delta = linregress(xvalues, delta)[0]
-                delta_score = -slope_ori * slope_delta  # how much the slope is different from the original
+                delta_slope = linregress(xvalues, delta)[0]
                 
                 if j == 0:
-                    delta_high[i] = delta_score
-                    aa_high[i] = amino_acids_filtered[j]
+                    delta_slopes[i] = delta_slope
+                    delta_aa[i] = amino_acids_filtered[j]
                 else:
-                    if delta_score > delta_high[i]:
-                        delta_high[i] = delta_score
-                        aa_high[i] = amino_acids_filtered[j]
+                    if cfg.standalone.mut_direction == 'negative':
+                        if delta_slope < delta_slopes[i]:
+                            delta_slopes[i] = delta_slope
+                            delta_aa[i] = amino_acids_filtered[j]
+                    else:
+                        if delta_slope > delta_slopes[i]:
+                            delta_slopes[i] = delta_slope
+                            delta_aa[i] = amino_acids_filtered[j]
         
         # get best positions (top-k)
-        masked_delta_high = np.ma.masked_array(delta_high, mask=valid_mask)
-        selected_indices = masked_delta_high.argsort(endwith=False)[::-1][:cfg.standalone.num_mut]
-        selected_values = masked_delta_high[selected_indices].data
-        selected_aas = aa_high[selected_indices]
+        masked_delta_sorted = np.ma.masked_array(delta_slopes, mask=valid_mask)
+        if cfg.standalone.mut_direction == 'negative':
+            selected_indices = masked_delta_sorted.argsort(endwith=True)[:cfg.standalone.num_mut]
+        else:
+            selected_indices = masked_delta_sorted.argsort(endwith=False)[::-1][:cfg.standalone.num_mut]
+        selected_values = masked_delta_sorted[selected_indices].data
+        selected_aas = delta_aa[selected_indices]
         
         # save with mutated protein
         mutated_seq = np.array(list(original_seq))
@@ -230,6 +243,7 @@ def main(cfg: DictConfig):
             static_pos.append(selected_indices[i])
         print("==================== Mutation Results ===================")
         print(print_str)
+        
         llps.save_mutated_protein(cfg.data.mut_file, mutated_seq, static_pos)
     else:
         raise ValueError("Not supported experiment task type.")

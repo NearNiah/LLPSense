@@ -175,7 +175,7 @@ def main(cfg: DictConfig):
     outputs_dir = create_dir(Path('outputs/models'))
     log_dir = create_dir(Path('outputs/logs'))
 
-    x_train, y_train = llps.extract(cfg.data.train_file, seq_length_min=cfg.data.seq_length_min, feat_type=cfg.method.feat_type, use_cond=False)
+    x_train, y_train, _, _, _ = llps.extract(cfg.data.train_file, seq_length_min=cfg.data.seq_length_min, feat_type=cfg.method.feat_type, use_cond=False)
     
     train_no = len(y_train)
     id_no = 195
@@ -212,8 +212,8 @@ def main(cfg: DictConfig):
     
     if cfg.check.test_score and cfg.method.mode != 'valid':
 
-        x_test_id, y_test_id = llps.extract(cfg.data.test_file1, seq_length_min=cfg.data.seq_length_min, feat_type=cfg.method.feat_type, use_cond=False)
-        x_test_noid, y_test_noid = llps.extract(cfg.data.test_file2, seq_length_min=cfg.data.seq_length_min, feat_type=cfg.method.feat_type, use_cond=False)
+        x_test_id, y_test_id, _, _, _ = llps.extract(cfg.data.test_file1, seq_length_min=cfg.data.seq_length_min, feat_type=cfg.method.feat_type, use_cond=False)
+        x_test_noid, y_test_noid, _, _, _ = llps.extract(cfg.data.test_file2, seq_length_min=cfg.data.seq_length_min, feat_type=cfg.method.feat_type, use_cond=False)
         
         # Evaluate the model
         metrics_id = model.evaluate(x_test_id, y_test_id)

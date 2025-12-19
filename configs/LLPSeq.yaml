@@ -3,6 +3,9 @@ method:
   mode: 'optuna'  # [optuna, valid, train]  # find the best hyperparameters with optuna, if false, use the set hyperparameters
   wandb: True # log the results with wandb
 
+standalone:
+  model_path: 'models/LLPSeq.pkl'
+
 model:
   n_estimators: 956
   max_depth: 14
@@ -19,7 +22,7 @@ model:
 
 data:
   train_file: 'data/processed/PSPire_train.npz'
-  test_file1: 'data/processed/PSPire_test_ID.npz'
+  test_file1: 'data/processed/PSPire_test_ID.npz'  # will be used in standalone
   test_file2: 'data/processed/PSPire_test_noID.npz'
   seq_length_min: 0 # minimum sequence length
 

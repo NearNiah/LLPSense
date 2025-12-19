@@ -6,8 +6,9 @@ method:
 standalone:
   model_path: 'models/LLPSense.pkl'
   exp_task: 'predict'  # [test, predict, screen, mut, mut_screen]
-  screen: 'temp'  # ['temp', 'conc', 'pH', 'nacl']  # for 3d case or more, ex) ['temp', 'conc'], ['temp', 'conc', 'pH']
+  screen: ['conc', 'nacl']  # ['temp', 'conc', 'pH', 'nacl']  # for 3d case or more, ex) ['temp', 'conc'], ['temp', 'conc', 'pH']
   num_mut: 1
+  mut_direction: 'negative'  # 'positive' or 'negative'
 
 thresholds:
   nsplits: 5

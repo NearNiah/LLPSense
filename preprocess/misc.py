@@ -18,9 +18,9 @@ amino_acids = ['A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 
 
 # base condition for screening and mutation analysis
 base_cond_screen = {
-    'temp': 25.0,   # degree Celsius
+    'temp': 25.0,   # degree Celsius, 25
     'conc': 100.0,   # uM
-    'pH': 7.3,
+    'pH': 7.3,  # 7.3
     
     'PEG300-1k': 0.0,   # %
     'PEG3k-6k': 0.0,   # %
@@ -39,7 +39,7 @@ base_cond_screen = {
 base_cond_mutation = {
     'temp': 25.0,   # degree Celsius
     'conc': 10.0,   # uM
-    'pH': 7.4,
+    'pH': 7.3,
     
     'PEG300-1k': 0.0,   # %
     'PEG3k-6k': 0.0,   # %
@@ -49,17 +49,17 @@ base_cond_mutation = {
     'Dextran 70-': 0.0,   # %
     
     'mgcl2': 0.0,   # mM
-    'nacl': 200.0,   # mM
-    'kcl': 3.0,   # mM
+    'nacl': 160.0,   # mM
+    'kcl': 0.0,   # mM
     
     'glyc': 0.0  # %
 }
 
 
 base_cond_screen_multiple = {
-    'temp': 37.0,   # degree Celsius
-    'conc': 10.0,   # uM
-    'pH': 7.4,
+    'temp': 25.0,   # degree Celsius
+    'conc': 100.0,   # uM
+    'pH': 7.3,
     
     'PEG300-1k': 0.0,   # %
     'PEG3k-6k': 0.0,   # %
@@ -69,8 +69,8 @@ base_cond_screen_multiple = {
     'Dextran 70-': 0.0,   # %
         
     'mgcl2': 0.0,
-    'nacl': 137.0,
-    'kcl': 3.0,
+    'nacl': 160.0,
+    'kcl': 0.0,
     
     'glyc': 0.0
 }
@@ -91,15 +91,17 @@ max_values = {
 # define scaling and biasing factors for condition normalization
 scale_cond = {
     'temp': 1.0,
-    'conc': 0.1,
-    'salt': 20,
+    'conc': 20,
+    'salt': 20,  # same as nacl
+    'nacl': 10,
     'pH': 0.1
 }
 bias_cond = {
-    'temp': 0.0,
+    'temp': 0.0,  # 0.0
     'conc': 0.0,
-    'salt': 0.0,
-    'pH': 5.0
+    'salt': 0.0,  # same as nacl
+    'nacl': 0.0,
+    'pH': 6.5
 }
 
 
