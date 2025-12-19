@@ -23,7 +23,7 @@ do
     python -m preprocess.extract_feat --feature_type=t5 --srcfilename=$CURRENT_FILE.npz
 
     # Run the mutation screen and save output in data/processed
-    python LLPSense_standalone.py data.mut_file=data/processed/$CURRENT_FILE.npz standalone.num_mut=$NUM_MUT standalone.exp_task=mut_screen standalone.screen=temp expname=$CURRENT_FILE
+    python LLPSense_standalone.py data.mut_file=data/processed/$CURRENT_FILE.npz standalone.num_mut=$NUM_MUT standalone.exp_task=mut_screen standalone.screen=temp expname=$CURRENT_FILE standalone.mut_direction=negative
 
     echo "Iteration $((i+1)) completed successfully."
     
