@@ -177,7 +177,7 @@ python LLPSense_standalone.py standalone.exp_task=mut_screen standalone.screen=t
 If you want to reproduce our UBQLN4 result, you can use our custom script that iteratively mutates protein and modulate condition-dependent phase behavior.
 > **⚠️ Pre-requisite:** You need to first preprocess `UBQLN4.xlsx` in `data/raw` following the [instruction](#-data-preparation-your-own-protein).
 ```bash
-sh ./scripts/mut_screen.sh UBQLN4 3 10  # mutate 10 times and find top-3 single mutations at each time.
+sh ./scripts/mut_screen.sh UBQLN4 10 3  # mutate 3 times and find top-10 single mutations at each time.
 ```
 
 <br>
