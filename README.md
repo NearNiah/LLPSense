@@ -278,16 +278,13 @@ python train_LLPSeq.py --config-name LLPSeq method.mode=optuna check.save_model=
 If you find this project useful for your research, please consider citing our paper:
 
 ```bibtex
-@article {Bae2025.12.28.696755,
-	author = {Bae, Jangwon and Kang, Minjun and Lee, Donghyuk and Yoon, Kuk-Jin and Jung, Yongwon},
-	title = {A machine learning framework for predicting and modulating condition-dependent protein phase separation},
-	elocation-id = {2025.12.28.696755},
-	year = {2025},
-	doi = {10.64898/2025.12.28.696755},
-	publisher = {Cold Spring Harbor Laboratory},
-	URL = {https://www.biorxiv.org/content/early/2025/12/29/2025.12.28.696755},
-	eprint = {https://www.biorxiv.org/content/early/2025/12/29/2025.12.28.696755.full.pdf},
-	journal = {bioRxiv}
+@article{bae2025machine,
+  title={A machine learning framework for predicting and modulating condition-dependent protein phase separation},
+  author={Bae, Jangwon and Kang, Minjun and Lee, Donghyuk and Yoon, Kuk-Jin and Jung, Yongwon},
+  journal={bioRxiv},
+  pages={2025--12},
+  year={2025},
+  publisher={Cold Spring Harbor Laboratory}
 }
 ```
 
