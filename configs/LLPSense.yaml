@@ -1,0 +1,46 @@
+method: 
+  feat_type: 't5'  # t5
+  mode: 'valid'  # [optuna, valid, train]  # find the best hyperparameters with optuna, if false, use the set hyperparameters
+  wandb: True # log the results with wandb
+
+standalone:
+  model_path: 'models/LLPSense.pkl'
+  exp_task: 'predict'  # [test, predict, screen, mut, mut_screen]
+  screen: ['conc', 'nacl']  # ['temp', 'conc', 'pH', 'nacl']  # for 3d case or more, ex) ['temp', 'conc'], ['temp', 'conc', 'pH']
+  num_mut: 1
+  mut_direction: 'negative'  # 'positive' or 'negative'
+
+thresholds:
+  nsplits: 5
+  screen: 'temp'
+  test_file: 'data/processed/LLPSDB_threshold.npz'
+
+model:
+  n_estimators: 877
+  max_depth: 14
+  random_state: 42
+  lr: 0.023722174554030036 # learning_rate
+  mcw: 2 # min_child_weight
+  col: 0.5655509178160505 # colsample_bytree
+  sub: 0.5482175662874387 # subsample
+  gamma: 0.0012682360748828933
+  reg_lambda: 0.3024802937837069
+  reg_alpha: 0.04238171400820899
+  device: 'cuda:1'
+
+data:
+  train_file: 'data/processed/Dataset_LLPSense.npz'
+  test_file: 'data/processed/A_IDP.npz'
+  screen_file: 'data/processed/HSL_mut.npz'
+  mut_file: 'data/processed/HSL.npz'
+  seq_length_min: 0 # minimum sequence length
+  apply_smooth: True
+  smoothing_window: 15
+
+check:
+  test_score: False # check the test score and save scores in the result file (output/results/Pred_Prob_expname.xlxs)
+  save_model: True # save the model (output/models/XGmodel_expname.pkl)
+  irregular: False # check the irregularity of the data (screen)
+  feature_importance: False
+
+expname: 'default'

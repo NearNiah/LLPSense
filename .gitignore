@@ -1,0 +1,7 @@
+__pycache__/
+env/
+.vscode/
+logs/
+outputs/
+wandb/
+*.zip
