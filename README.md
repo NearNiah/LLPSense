@@ -142,7 +142,7 @@ The output file (`predict.xlsx`) should contain:
 
 * LLPS probabilities for **our LLPS-modulated variants** under standard conditions (**Supplementary Table 1**).
 
-* LLPS probabilities for **pathogenic variants** under standard conditions (*Figures will be provided in a future version of the manuscript*).
+* LLPS probabilities for **pathogenic variants** under standard conditions (**Supplementary Figure 7**).
 
 ### Expected Runtime
 **Typical runtime: ~5 seconds or less** on a standard desktop computer. 
