@@ -128,7 +128,7 @@ python -m preprocess.extract_feat --feature_type=eng --srcfilename=Data_template
 ---
 
 ## ▶️ Quick Start
-We provide preprocessed features for **α-synuclein**, including **pathogenic variants** and **known mutated variants**. 
+We provide preprocessed features for **α-synuclein**, including our LLPS-modulated variants and pathogenic variants with LLPS propensity confirmed in the literature.
 
 ### Instruction
 Running the command below will generate a prediction spreadsheet.
@@ -140,13 +140,13 @@ The result will be saved to `outputs/results/LLPSense_alphasyn/predict.xlsx`.
 ### Expected Output
 The output file (`predict.xlsx`) should contain:
 
-* **LLPS probability for pathogenic variants** under standard condition (**Supplementary Table 1**).
+* LLPS probabilities for **our LLPS-modulated variants** under standard conditions (**Supplementary Table 1**).
 
-* **LLPS probability for known mutated variants** under standard condition (**Supplementary Figure 5**).
+* LLPS probabilities for **pathogenic variants** under standard conditions (*Figures will be provided in a future version of the manuscript*).
 
 ### Expected Runtime
-**Typical runtime: ~5 seconds or less** on a normal desktop computer.
-Runtime mainly depends on CPU/GPU speed, disk I/O, and whether any additional model/assets are loaded during inference.
+**Typical runtime: ~5 seconds or less** on a standard desktop computer. 
+Runtime primarily depends on CPU/GPU speed, disk I/O, and whether additional models or assets are loaded during inference.ce.
 
 ---
 
