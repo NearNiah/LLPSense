@@ -146,7 +146,7 @@ The output file (`predict.xlsx`) should contain:
 
 ### Expected Runtime
 **Typical runtime: ~5 seconds or less** on a standard desktop computer. 
-Runtime primarily depends on CPU/GPU speed, disk I/O, and whether additional models or assets are loaded during inference.ce.
+Runtime primarily depends on CPU/GPU speed, disk I/O, and whether additional models or assets are loaded during inference.
 
 ---
 
