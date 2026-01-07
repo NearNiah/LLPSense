@@ -62,6 +62,30 @@ pip install -r requirements.txt
 
 ---
 
+## ▶️ Quick Start
+We provide preprocessed features for **α-synuclein**, including our LLPS-modulated variants and pathogenic variants with LLPS propensity confirmed in the literature.
+
+### Instruction
+Running the command below will generate a prediction spreadsheet.
+```bash
+python LLPSense_standalone.py standalone.exp_task=predict data.test_file=data/processed/alphasyn.npz expname=alphasyn
+```
+The result will be saved to `outputs/results/LLPSense_alphasyn/predict.xlsx`.
+
+### Expected Output
+The output file (`predict.xlsx`) should contain:
+
+* LLPS probabilities for **our LLPS-modulated variants** under standard conditions (**Supplementary Table 1**).
+
+* LLPS probabilities for **pathogenic variants** under standard conditions (**Supplementary Figure 7**).
+
+### Expected Runtime
+**Typical runtime: ~5 seconds or less** on a standard desktop computer. 
+Runtime primarily depends on CPU/GPU speed, disk I/O, and whether additional models or assets are loaded during inference.
+
+---
+
+
 ## 💽 Data Preparation (Your own protein)
 
 To apply the model to your own proteins, you need to format the sequences and experimental conditions, followed by feature extraction.
@@ -124,29 +148,6 @@ For Engineered features:
 python -m preprocess.extract_feat --feature_type=eng --srcfilename=Data_template.npz 
 ```
 *See [preprocess/extract_feat.py](preprocess/extract_feat.py) for implementation details.*
-
----
-
-## ▶️ Quick Start
-We provide preprocessed features for **α-synuclein**, including our LLPS-modulated variants and pathogenic variants with LLPS propensity confirmed in the literature.
-
-### Instruction
-Running the command below will generate a prediction spreadsheet.
-```bash
-python LLPSense_standalone.py standalone.exp_task=predict data.test_file=data/processed/alphasyn.npz expname=alphasyn
-```
-The result will be saved to `outputs/results/LLPSense_alphasyn/predict.xlsx`.
-
-### Expected Output
-The output file (`predict.xlsx`) should contain:
-
-* LLPS probabilities for **our LLPS-modulated variants** under standard conditions (**Supplementary Table 1**).
-
-* LLPS probabilities for **pathogenic variants** under standard conditions (**Supplementary Figure 7**).
-
-### Expected Runtime
-**Typical runtime: ~5 seconds or less** on a standard desktop computer. 
-Runtime primarily depends on CPU/GPU speed, disk I/O, and whether additional models or assets are loaded during inference.
 
 ---
 
