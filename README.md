@@ -302,6 +302,8 @@ Our project was deeply inspired by and built upon previous studies. We explicitl
 ---
 
 ## 📧 Contact
-If you have any questions regarding this project, please open an issue or contact the authors:
+We warmly welcome the application of LLPSense to a wide range of research fields. Our goal is to make this tool as accessible and impactful as possible for the scientific community.
+
+If you encounter any challenges during implementation, have questions regarding the project, or are interested in potential collaborations, please feel free to reach out. You can get in touch by opening an issue in this repository or by contacting the authors directly:
 * **Jangwon Bae**: [baejang1@kaist.ac.kr](mailto:baejang1@kaist.ac.kr)
 * **Minjun Kang**: [kmmj2005@kaist.ac.kr](mailto:kmmj2005@kaist.ac.kr)
