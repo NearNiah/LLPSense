@@ -56,13 +56,15 @@ def get_range_data(minvalue, maxvalue, num_split, num_unit, reverse_order=False,
 
 # process ~ data
 def process_data(data, tag):
-    if isinstance(data, (float, int)):
+    if isinstance(data, (float, int)) and float(data) >= 0:
         return [float(data) / guide_all[tag][0]]
     else:
         if tag == 'temp':
             data = data.replace('RT', '25')
-        if '~' in data:  # data with range
-            splitted = data.split('~')
+        if isinstance(data, (float, int)):
+            data = str(data)
+        if '~' in data or '-' in data:  # data with range
+            splitted = data.split('~') if '~' in data else data.split('-')
             assert(len(splitted) == 2)
             # case 1 : a ~ b
             if not '' in splitted:
