@@ -45,7 +45,7 @@ docker pull pytorch/pytorch:2.3.1-cuda11.8-cudnn8-devel
 # 2-A. GPU - Recommended
 docker run -it -d --gpus all --name llpsense --shm-size=256g --privileged -v "${PWD}:/workspace" pytorch/pytorch:2.3.1-cuda11.8-cudnn8-devel
 docker attach llpsense
-# 2-A. CPU - Inference only
+# 2-B. CPU - Inference only
 docker run -it -d --name llpsense --shm-size=16g --privileged -v "${PWD}:/workspace" pytorch/pytorch:2.3.1-cuda11.8-cudnn8-devel
 docker attach llpsense
 
