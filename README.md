@@ -295,11 +295,11 @@ If you find this project useful for your research, please consider citing our pa
 
 ## 🙏 Acknowledgements
 Our project was deeply inspired by and built upon previous studies. We explicitly thank the authors and contributors of the following works:
-* [PSPire](https://www.nature.com/articles/s41467-024-46445-y) (Nature Comm '24)
-* [Droppler](https://academic.oup.com/bioinformatics/article/37/20/3473/6275261) (Bioinformatics '21)
-* [DeePhase](https://www.pnas.org/doi/10.1073/pnas.2019053118) (PNAS '21)
-* [PSPHunter](https://www.nature.com/articles/s41467-024-46901-9) (Nature Comm '24)
 * [ProtTrans](https://ieeexplore.ieee.org/document/9477085) (IEEE TPAMI '21)
+* [DeePhase](https://www.pnas.org/doi/10.1073/pnas.2019053118) (PNAS '21)
+* [PSPire](https://www.nature.com/articles/s41467-024-46445-y) (Nat. Commun. '24)
+* [PSPHunter](https://www.nature.com/articles/s41467-024-46901-9) (Nat. Commun '24)
+* [Droppler](https://academic.oup.com/bioinformatics/article/37/20/3473/6275261) (Bioinformatics '21)
 
 ---
 
