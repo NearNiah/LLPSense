@@ -9,7 +9,6 @@ import LLPSXG as llps
 import itertools
 from copy import deepcopy
 from scipy.stats import linregress
-from sparrow import Protein
 
 root = pyrootutils.setup_root(__file__, dotenv=True, pythonpath=True) 
 
