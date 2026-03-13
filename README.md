@@ -270,7 +270,7 @@ python train_LLPSeq.py --config-name LLPSeq method.mode=optuna check.save_model=
 
 | Model | Accuracy | AUROC | AUPRC |
 | :--- | :---: | :---: | :---: |
-| [Droppler [2]](https://academic.oup.com/bioinformatics/article/37/20/3473/6275261) (Bioinformatics '21) | 61 | 67 (64*) | 59 |
+| [Droppler [2]](https://academic.oup.com/bioinformatics/article/37/20/3473/6275261) (Bioinformatics '21) | 62 | 67 (64*) | 59 |
 | **LLPSense (Ours)** | **68** | **77** | **74** |
 
 <sup>*</sup> *Official AUROC reported in the Droppler paper. Values in the main column are obtained by training on our novel expanded dataset from scratch. Note that training Droppler on our dataset leads to improved results.*
