@@ -144,7 +144,7 @@ def validation(cfg, outputs_dir, merged_feature, y_train, train_cluster):
     accuracyscore = np.mean(accuracy_scores)
     aucscore = np.mean(auroc_scores) 
     prcscore = np.mean(auprc_scores)
-    std_accuracy = np.std(accuracy_scores)
+    std_accuracy = np.std(accuracy_scores, ddof=1)
     
     # print
     print(f"Mean Loss: {logscore}, Mean Accuracy: {accuracyscore}, Mean AUROC: {aucscore}, Mean AUPRC: {prcscore}, Std Accuracy: {std_accuracy}")
