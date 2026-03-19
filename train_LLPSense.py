@@ -208,7 +208,7 @@ def main(cfg: DictConfig):
         # Save the evaluation results to an Excel file
         calc_results = model.cal_prob(merged_feature_test, y_test) 
         llps.save_results(str(results_dir / f"Pred_Prob_{cfg.expname}.xlsx"), calc_results, 
-                         evaluation_results['roc_curve'], evaluation_results['pr_curve'], test_cond, test_seq, y_true=y_test)
+                         evaluation_results['roc_curve'], evaluation_results['pr_curve'], test_cond, test_name, test_seq, y_true=y_test)
     
     if cfg.check.save_model and cfg.method.mode != 'valid':
         model.save_model(str(outputs_dir / f"LLPSense_{cfg.expname}.pkl"))
