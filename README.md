@@ -213,9 +213,8 @@ sh ./scripts/mut_screen_neg.sh UBQLN4 10 3  # mutate 3 times and find top-10 sin
 ```
 
 #### F. SHAP Analysis and Channel Reduction
-SHAP analysis helps interpret which T5 feature channels contribute most to LLPS predictions. In this workflow, you first generate prediction outputs, then convert the exported SHAP scores into an index map, and finally retrain or reuse a compact channel-reduced model.
+SHAP analysis helps interpret which T5 feature channels or conditions contribute most to LLPS predictions. In this workflow, you first generate prediction outputs, then convert the exported SHAP scores into an index map, and finally retrain or reuse a compact channel-reduced model.
 
-**Workflow summary**
 * Step 1: prepare the T5-based processed datasets for the human proteome and LLPSense benchmark.
 * Step 2: run prediction to export SHAP results into the corresponding output directory.
 * Step 3: move `predict_shap_data.xlsx` into `shap_analysis/` and build the feature-importance index map.
