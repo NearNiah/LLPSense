@@ -23,6 +23,22 @@ MEDIUM_SIZE = 25
 BIGGER_SIZE = 32
 
 
+def _load_feat_indices(feat_index_file):
+    """Load feature indices from a text file (one integer per line).
+
+    Args:
+        feat_index_file (str | None): path to feature_index_N.txt. None returns None.
+
+    Returns:
+        np.ndarray of int indices, or None
+    """
+    if feat_index_file is None:
+        return None
+    with open(feat_index_file, 'r') as f:
+        indices = [int(line.strip()) for line in f if line.strip()]
+    return np.array(indices, dtype=int)
+
+
 class LLPSXG:
     def __init__(self, n_estimators, max_depth, learning_rate, min_child_weight, colsample_bytree, subsample, gamma, reg_lambda, reg_alpha,
                  objective='binary:logistic', random_state=42, device='cuda:0', eval_metric='logloss', booster='gbtree', sampling_method='uniform'):
@@ -189,8 +205,9 @@ def save_mut_results(filepath, score_ori, score_delta, seqs_ori, seqs_mut, names
     df_results.to_excel(filepath, index=False, sheet_name='Results')
 
 
-def extract(path, seq_length_min=None, feat_type='t5', use_cond=False):
+def extract(path, seq_length_min=None, feat_type='t5', use_cond=False, feat_index_file=None):
     protfeat, seq, cond_set, label, group, name = [], [], [], [], [], []
+    feat_indices = _load_feat_indices(feat_index_file)
     data = np.load(path, allow_pickle=True)['data']
     for sample in tqdm(data, desc='Loading features from data'):
         sample_dict = edict(sample)
@@ -198,6 +215,8 @@ def extract(path, seq_length_min=None, feat_type='t5', use_cond=False):
             if len(sample_dict.seq) < seq_length_min: continue
         with h5py.File(sample_dict[f'{feat_type}_feature_path'], 'r') as f:
             fvalue = np.array(f['protein_feat'][0][:])
+            if feat_indices is not None:
+                fvalue = fvalue[feat_indices]
             flist = fvalue.tolist()
             protfeat.append(flist)
         label.append(sample_dict.score)
@@ -215,9 +234,10 @@ def extract(path, seq_length_min=None, feat_type='t5', use_cond=False):
         return np.array(protfeat), np.array(label), np.array(group), name, seq
     
     
-def extract_mut(path, cond, seq_length_min=None, feat_type='t5'):
+def extract_mut(path, cond, seq_length_min=None, feat_type='t5', feat_index_file=None):
     mutation_static_pos = []  # we do not consider mutations at the static positions
     protfeat, seq, cond_set, label, group, name = [], [], [], [], [], []
+    feat_indices = _load_feat_indices(feat_index_file)
     data = np.load(path, allow_pickle=True)['data']
     
     if isinstance(cond, str):
@@ -239,6 +259,8 @@ def extract_mut(path, cond, seq_length_min=None, feat_type='t5'):
         
         with h5py.File(sample_dict[f'{feat_type}_feature_path'], 'r') as f:
             fvalue = np.array(f['protein_feat'][0][:])
+            if feat_indices is not None:
+                fvalue = fvalue[feat_indices]
             flist = fvalue.tolist()
             
         if 'static_pos' in sample_dict:
@@ -271,8 +293,9 @@ def extract_mut(path, cond, seq_length_min=None, feat_type='t5'):
     return np.array(protfeat), np.array(label), np.array(cond_set), np.array(group), name, seq, mutation_static_pos
     
     
-def extract_screen(path, screen, seq_length_min=None, feat_type='t5'):
+def extract_screen(path, screen, seq_length_min=None, feat_type='t5', feat_index_file=None):
     protfeat, seq, cond_set, label, group, name = [], [], [], [], [], []
+    feat_indices = _load_feat_indices(feat_index_file)
     
     ## change this part ##
     range_temp = range(0, 61)  # (1, 61)
@@ -293,6 +316,8 @@ def extract_screen(path, screen, seq_length_min=None, feat_type='t5'):
         if sample_dict.group == 2: continue
         with h5py.File(sample_dict[f'{feat_type}_feature_path'], 'r') as f:
             fvalue = np.array(f['protein_feat'][0][:])
+            if feat_indices is not None:
+                fvalue = fvalue[feat_indices]
             flist = fvalue.tolist()
         if sample_dict.conc != 0:
             scale_value_cond['conc'] = sample_dict.conc * misc.max_conc / 100
@@ -309,8 +334,9 @@ def extract_screen(path, screen, seq_length_min=None, feat_type='t5'):
     return np.array(protfeat), np.array(label), np.array(cond_set), np.array(group), name, seq
 
 
-def extract_screen_mul(path, screen, seq_length_min=None, feat_type='t5'):
+def extract_screen_mul(path, screen, seq_length_min=None, feat_type='t5', feat_index_file=None):
     protfeat, seq, cond_set, label, group, name = [], [], [], [], [], []
+    feat_indices = _load_feat_indices(feat_index_file)
     
     ## change this part ##
     range_temp = range(0, 31)
@@ -337,6 +363,8 @@ def extract_screen_mul(path, screen, seq_length_min=None, feat_type='t5'):
         if sample_dict.group == 2: continue
         with h5py.File(sample_dict[f'{feat_type}_feature_path'], 'r') as f:
             fvalue = np.array(f['protein_feat'][0][:])
+            if feat_indices is not None:
+                fvalue = fvalue[feat_indices]
             flist = fvalue.tolist()
         if sample_dict.conc != 0:
             scale_value_cond['conc'] = sample_dict.conc * misc.max_conc / 100

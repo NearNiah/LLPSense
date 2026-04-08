@@ -212,6 +212,35 @@ If you want to reproduce our UBQLN4 result, you can use our custom script that i
 sh ./scripts/mut_screen_neg.sh UBQLN4 10 3  # mutate 3 times and find top-10 single mutations at each time.
 ```
 
+#### F. SHAP Analysis and Channel Reduction
+SHAP analysis helps interpret which T5 feature channels contribute most to LLPS predictions. In this workflow, you first generate prediction outputs, then convert the exported SHAP scores into an index map, and finally retrain or reuse a compact channel-reduced model.
+
+**Workflow summary**
+* Step 1: prepare the T5-based processed datasets for the human proteome and LLPSense benchmark.
+* Step 2: run prediction to export SHAP results into the corresponding output directory.
+* Step 3: move `predict_shap_data.xlsx` into `shap_analysis/` and build the feature-importance index map.
+* Step 4: optionally search for the best channel-reduction setting with Optuna.
+* Step 5: run inference with the trained or provided squeezed model.
+
+```bash
+# Step 1. follow preprocessing step to get T5 feature of human_proteome / LLPSense Dataset
+
+# Step 2. run prediction and get shap analysis file under outputs/results/LLPSense_human_shap or outputs/results/LLPSense_llpsdb_shap
+python LLPSense_standalone.py standalone.exp_task=predict data.test_file=data/processed/human_proteome.npz expname=human_shap
+python LLPSense_standalone.py standalone.exp_task=predict data.test_file=data/processed/Dataset_LLPSense.npz expname=llpsdb_shap
+
+# Step 3. move and rename predict_shap_data.xlsx to shap_analysis directory.
+# We already provide human_shap.xlsx and llpsdb_shap.xlsx from step 2.
+# Run the following command to make the feature-importance index map.
+python -m shap_analysis.shap_sampling
+
+# Step 4. (optional) get the optimal parameter of LLPSense with channel reduction using optuna.
+python train_LLPSense.py --config-name=LLPSense_human_topk method.topk=512 method.mode=optuna
+
+# Step 5. run inference using the trained model; a 1024->64 channel-squeezed model is provided at models/LLPSense_llpsdb_top64_shap.pkl
+python LLPSense_standalone.py --config-name=LLPSense_llpsdb_topk standalone.exp_task=predict data.test_file=data/processed/alphasyn.npz expname=alphasyn_top64_shap
+```
+
 ### 2. LLPSeq (Sequence Only)
 **LLPSeq** predicts LLPS propensity based **solely on protein sequence**. We benchmark against the [PSPire](https://www.nature.com/articles/s41467-024-46445-y) dataset.
 

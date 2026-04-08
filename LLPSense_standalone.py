@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from pathlib import Path
 import preprocess.misc as misc
 from preprocess.utils import create_dir
@@ -9,12 +10,20 @@ import LLPSXG as llps
 import itertools
 from copy import deepcopy
 from scipy.stats import linregress
+import matplotlib.pyplot as plt
+
+# optional for shap analysis, not required for main functionality
+try:
+    import shap
+except ImportError:
+    shap = None
 
 root = pyrootutils.setup_root(__file__, dotenv=True, pythonpath=True) 
 
 @hydra.main(version_base="1.2", config_path=str(root / "configs"), config_name="LLPSense")
 def main(cfg: DictConfig):
     feat_type = cfg.method.feat_type
+    feat_index_file = cfg.method.get('feat_index_file', None)
     outputs = create_dir(Path(f'outputs/results/LLPSense_{cfg.expname}'))
     assert cfg.standalone.exp_task in ['test', 'predict', 'screen', 'mut', 'mut_inst', 'mut_screen']
     
@@ -26,17 +35,67 @@ def main(cfg: DictConfig):
     model.load_model(cfg.standalone.model_path)
     
     if cfg.standalone.exp_task == 'test':
-        x_test, y_test, test_cond, test_group, test_name, test_seq = llps.extract(cfg.data.test_file, seq_length_min=cfg.data.seq_length_min, feat_type=feat_type, use_cond=True)
+        x_test, y_test, test_cond, test_group, test_name, test_seq = llps.extract(cfg.data.test_file, seq_length_min=cfg.data.seq_length_min, feat_type=feat_type, use_cond=True, feat_index_file=feat_index_file)
         merged_feature = np.concatenate((x_test, test_cond), axis=1)
         output = model.evaluate(merged_feature, y_test)
         print(f"Mean Accuracy: {output['accuracy']}, Mean AUROC: {output['roc_auc']}, Mean AUPRC: {output['pr_auc']}")
         llps.save_results(outputs / f"test.xlsx", output['prob'], roc_curve_data=output['roc_curve'], pr_curve_data=output['pr_curve'], cond=test_cond, seq=test_seq, name=test_name, y_true=y_test)
     
     elif cfg.standalone.exp_task == 'predict':
-        x_test, y_test, test_cond, test_group, test_name, test_seq = llps.extract(cfg.data.test_file, seq_length_min=cfg.data.seq_length_min, feat_type=feat_type, use_cond=True)
+        x_test, y_test, test_cond, test_group, test_name, test_seq = llps.extract(cfg.data.test_file, seq_length_min=cfg.data.seq_length_min, feat_type=feat_type, use_cond=True, feat_index_file=feat_index_file)
         merged_feature = np.concatenate((x_test, test_cond), axis=1)
         output = model.predict_proba(merged_feature)[:, 1]
         llps.save_results(outputs / f"predict.xlsx", output, cond=test_cond, seq=test_seq, name=test_name)
+        
+        # SHAP analysis (optional)
+        if shap is None:
+            print("SHAP analysis skipped: install 'shap' to enable explainability output.")
+        else:
+            # T5 feature 이름: feat_index_file에서 실제 인덱스를 읽어 T5_{idx} 형태로 구성
+            feat_indices = llps._load_feat_indices(feat_index_file)
+            if feat_indices is not None:
+                t5_feature_names = [f"T5_{i}" for i in feat_indices]
+            else:
+                t5_feature_names = [f"T5_{i}" for i in range(1024)]
+
+            # 나머지 13개의 피처 이름 리스트
+            additional_names = [
+                "Temperature", "Concentration", "pH",
+                "PEG 300-1000", "PEG 3000-6000", "PEG 8000-20000",
+                "Ficoll", "Dextran -40", "Dextran 70-",
+                "MgCl2", "NaCl", "KCl", "Glycerol"
+            ]
+
+            all_feature_names = t5_feature_names + additional_names
+            explainer = shap.TreeExplainer(model.model)
+            shap_values = explainer.shap_values(merged_feature)
+            shap.summary_plot(shap_values, merged_feature, feature_names=all_feature_names, max_display=32, show=False)
+            plt.tight_layout()
+            plt.savefig(outputs / "predict_shap_summary.png", dpi=300, bbox_inches='tight')
+            plt.close()
+            print(f"SHAP summary plot saved to: {outputs / 'predict_shap_summary.png'}")
+
+            # Save top-32 SHAP data to Excel for plot reproduction => use this code to save the top-K SHAP values of T5 features
+            shap_excel_path = outputs / "predict_shap_data.xlsx"
+            base_value = float(np.squeeze(explainer.expected_value))
+            top32_idx = np.argsort(np.abs(shap_values).mean(axis=0))[::-1][:32]
+            top32_names = [all_feature_names[i] for i in top32_idx]
+            with pd.ExcelWriter(shap_excel_path, engine='openpyxl') as writer:
+                # SHAP values per sample: rows=samples, cols=top-32 features
+                pd.DataFrame(shap_values[:, top32_idx], columns=top32_names).to_excel(
+                    writer, sheet_name='shap_values', index=False)
+                # Feature values per sample: needed for dot color in summary_plot
+                pd.DataFrame(merged_feature[:, top32_idx], columns=top32_names).to_excel(
+                    writer, sheet_name='feature_values', index=False)
+                # Per-feature importance (mean |SHAP|) for all features, sorted
+                pd.DataFrame({
+                    'feature':       all_feature_names,
+                    'mean_abs_shap': np.abs(shap_values).mean(axis=0),
+                }).sort_values('mean_abs_shap', ascending=False).to_excel(
+                    writer, sheet_name='feature_importance', index=False)
+                pd.DataFrame({'base_value': [base_value]}).to_excel(
+                    writer, sheet_name='meta', index=False)
+            print(f"SHAP data saved to: {shap_excel_path}")
     
     elif cfg.standalone.exp_task == 'screen':
         screen = cfg.standalone.screen
@@ -46,7 +105,7 @@ def main(cfg: DictConfig):
         # 2d screening, single condition monitoring
         if isinstance(screen, str):
             
-            x_screen, y_screen, screen_cond, group_cond, name_screen, seq_screen = llps.extract_screen(cfg.data.screen_file, screen=screen, seq_length_min=cfg.data.seq_length_min, feat_type=feat_type)
+            x_screen, y_screen, screen_cond, group_cond, name_screen, seq_screen = llps.extract_screen(cfg.data.screen_file, screen=screen, seq_length_min=cfg.data.seq_length_min, feat_type=feat_type, feat_index_file=feat_index_file)
             merged_feature = np.concatenate((x_screen, screen_cond), axis=1)
             output = model.predict_proba(merged_feature)[:, 1]
             
@@ -76,7 +135,7 @@ def main(cfg: DictConfig):
             screen = list(screen)
             screen_pair = itertools.combinations(screen, 2)
             for screen_0, screen_1 in screen_pair:
-                x_screen, y_screen, screen_cond, group_cond, name_screen, seq_screen = llps.extract_screen_mul(cfg.data.screen_file, screen=[screen_0, screen_1], seq_length_min=cfg.data.seq_length_min, feat_type=feat_type)
+                x_screen, y_screen, screen_cond, group_cond, name_screen, seq_screen = llps.extract_screen_mul(cfg.data.screen_file, screen=[screen_0, screen_1], seq_length_min=cfg.data.seq_length_min, feat_type=feat_type, feat_index_file=feat_index_file)
                 merged_feature = np.concatenate((x_screen, screen_cond), axis=1)
                 output = model.predict_proba(merged_feature)[:, 1]
                 screen_cond_metric = llps.cond_to_metric(screen_cond)
@@ -105,7 +164,7 @@ def main(cfg: DictConfig):
         cond_control = [25/60, 0.1, 7.4/14] + [0, 0, 0, 0, 0, 0] + [0, 200/2000, 0] + [0] # temp, conc, pH, cagents(6), salts(3), glyc
         
         # start from here
-        x_mut, y_mut, mut_cond, group_mut, name_mut, seq_mut, static_pos = llps.extract_mut(cfg.data.mut_file, cond=cond_control, seq_length_min=cfg.data.seq_length_min, feat_type=feat_type)
+        x_mut, y_mut, mut_cond, group_mut, name_mut, seq_mut, static_pos = llps.extract_mut(cfg.data.mut_file, cond=cond_control, seq_length_min=cfg.data.seq_length_min, feat_type=feat_type, feat_index_file=feat_index_file)
         merged_feature = np.concatenate((x_mut, mut_cond), axis=1)
         output = model.predict_proba(merged_feature)[:, 1]
         llps.save_results(outputs / f"mutation.xlsx", output, cond=mut_cond, seq=seq_mut, name=name_mut)
@@ -161,7 +220,7 @@ def main(cfg: DictConfig):
         assert isinstance(screen, str)  # only support single screen condition
         assert cfg.standalone.mut_direction in ['positive', 'negative']
         
-        x_mut, y_mut, mut_cond, group_mut, name_mut, seq_mut, static_pos = llps.extract_mut(cfg.data.mut_file, cond=screen, seq_length_min=cfg.data.seq_length_min, feat_type=feat_type)
+        x_mut, y_mut, mut_cond, group_mut, name_mut, seq_mut, static_pos = llps.extract_mut(cfg.data.mut_file, cond=screen, seq_length_min=cfg.data.seq_length_min, feat_type=feat_type, feat_index_file=feat_index_file)
         merged_feature = np.concatenate((x_mut, mut_cond), axis=1)
         output = model.predict_proba(merged_feature)[:, 1]
         screen_cond_metric = llps.cond_to_metric(mut_cond)

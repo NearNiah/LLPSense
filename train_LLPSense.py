@@ -1,6 +1,7 @@
 import xgboost as xgb
 from omegaconf import DictConfig
 import numpy as np
+import pandas as pd
 import hydra, pyrootutils, optuna, wandb
 import LLPSXG as llps
 from sklearn.model_selection import GroupKFold
@@ -137,8 +138,12 @@ def validation(cfg, outputs_dir, merged_feature, y_train, train_cluster):
         
         # save model and clusters
         clusters = np.unique(np.array(train_cluster)[val_index])
-        model.save_model(str(outputs_dir / f"LLPSense_{cfg.method.feat_type}_fold_{fold_idx+1}.pkl"))
-        np.save(outputs_dir / f"LLPSense_{cfg.method.feat_type}_fold_{fold_idx+1}_cluster.npy", clusters)
+        if cfg.method.get('topk', None) is not None:
+            model.save_model(str(outputs_dir / f"LLPSense_{cfg.method.feat_type}_top{cfg.method.topk}_fold_{fold_idx+1}.pkl"))
+            np.save(outputs_dir / f"LLPSense_{cfg.method.feat_type}_top{cfg.method.topk}_fold_{fold_idx+1}_cluster.npy", clusters)
+        else:
+            model.save_model(str(outputs_dir / f"LLPSense_{cfg.method.feat_type}_fold_{fold_idx+1}.pkl"))
+            np.save(outputs_dir / f"LLPSense_{cfg.method.feat_type}_fold_{fold_idx+1}_cluster.npy", clusters)
     
     logscore = np.mean(logloss_scores)
     accuracyscore = np.mean(accuracy_scores)
@@ -147,11 +152,50 @@ def validation(cfg, outputs_dir, merged_feature, y_train, train_cluster):
     std_accuracy = np.std(accuracy_scores, ddof=1)
     
     # print
-    print(f"Mean Loss: {logscore}, Mean Accuracy: {accuracyscore}, Mean AUROC: {aucscore}, Mean AUPRC: {prcscore}, Std Accuracy: {std_accuracy}")
+    print(f"Mean Loss: {logscore}, Mean Accuracy: {accuracyscore}, Std Accuracy: {std_accuracy}, Mean AUROC: {aucscore}, Mean AUPRC: {prcscore}")
 
     # plot ROC and PR curves
-    llps.draw_cross_roc_curve(mean_fpr, tprs, auroc_scores, disp_roc, str(outputs_dir / 'llpsense_roc_curve_fold.png'))
-    llps.draw_cross_pr_curve(mean_recall, precision_list, auprc_scores, disp_pr, str(outputs_dir / 'llpsense_pr_curve_fold.png'))
+    if cfg.method.get('topk', None) is not None:
+        llps.draw_cross_roc_curve(mean_fpr, tprs, auroc_scores, disp_roc, str(outputs_dir / f'llpsense_top{cfg.method.topk}_roc_curve_fold.png'))
+        llps.draw_cross_pr_curve(mean_recall, precision_list, auprc_scores, disp_pr, str(outputs_dir / f'llpsense_top{cfg.method.topk}_pr_curve_fold.png'))
+    else:
+        llps.draw_cross_roc_curve(mean_fpr, tprs, auroc_scores, disp_roc, str(outputs_dir / 'llpsense_roc_curve_fold.png'))
+        llps.draw_cross_pr_curve(mean_recall, precision_list, auprc_scores, disp_pr, str(outputs_dir / 'llpsense_pr_curve_fold.png'))
+    
+    # Save ROC/PR curve data and accuracy to Excel
+    if cfg.method.get('topk', None) is not None:
+        excel_path = str(outputs_dir / f'llpsense_top{cfg.method.topk}_curves_data.xlsx')
+    else:
+        excel_path = str(outputs_dir / 'llpsense_curves_data.xlsx')
+    with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
+        # Summary sheet: fold-wise accuracy, AUROC, AUPRC, logloss + mean/std
+        summary_data = {
+            'Fold': [f'Fold {i+1}' for i in range(len(accuracy_scores))] + ['Mean', 'Std'],
+            'Accuracy': list(accuracy_scores) + [accuracyscore, std_accuracy],
+            'AUROC': list(auroc_scores) + [aucscore, np.std(auroc_scores, ddof=1)],
+            'AUPRC': list(auprc_scores) + [prcscore, np.std(auprc_scores, ddof=1)],
+            'LogLoss': list(logloss_scores) + [logscore, np.std(logloss_scores, ddof=1)],
+        }
+        pd.DataFrame(summary_data).to_excel(writer, sheet_name='Summary', index=False)
+
+        # ROC curves sheet: mean_fpr + interpolated tprs + raw fpr/tpr per fold
+        roc_dict = {'mean_fpr': pd.Series(mean_fpr)}
+        for i, tpr in enumerate(tprs):
+            roc_dict[f'fold_{i+1}_tpr_interp'] = pd.Series(tpr)
+        for i, d in enumerate(disp_roc):
+            roc_dict[f'fold_{i+1}_fpr_raw'] = pd.Series(d.fpr)
+            roc_dict[f'fold_{i+1}_tpr_raw'] = pd.Series(d.tpr)
+        pd.DataFrame(roc_dict).to_excel(writer, sheet_name='ROC_Curves', index=False)
+
+        # PR curves sheet: mean_recall + interpolated precisions + raw recall/precision per fold
+        pr_dict = {'mean_recall': pd.Series(mean_recall)}
+        for i, prec in enumerate(precision_list):
+            pr_dict[f'fold_{i+1}_precision_interp'] = pd.Series(prec)
+        for i, d in enumerate(disp_pr):
+            pr_dict[f'fold_{i+1}_recall_raw'] = pd.Series(d.recall)
+            pr_dict[f'fold_{i+1}_precision_raw'] = pd.Series(d.precision)
+        pd.DataFrame(pr_dict).to_excel(writer, sheet_name='PR_Curves', index=False)
+    print(f"Curves data saved to {excel_path}")
     
     return logscore, accuracyscore, aucscore, prcscore
 
@@ -165,8 +209,9 @@ def main(cfg: DictConfig):
     results_dir = create_dir(Path('outputs/results'))
     outputs_dir = create_dir(Path('outputs/models'))
     log_dir = create_dir(Path('outputs/logs'))
+    feat_index_file = cfg.method.get('feat_index_file', None)
     
-    x_train, y_train, train_cond, train_cluster, train_seq, train_name = llps.extract(cfg.data.train_file, seq_length_min=cfg.data.seq_length_min, feat_type=cfg.method.feat_type, use_cond=True)
+    x_train, y_train, train_cond, train_cluster, train_seq, train_name = llps.extract(cfg.data.train_file, seq_length_min=cfg.data.seq_length_min, feat_type=cfg.method.feat_type, use_cond=True, feat_index_file=feat_index_file)
         
     merged_feature = np.concatenate((x_train, train_cond), axis=1)
 
@@ -198,7 +243,7 @@ def main(cfg: DictConfig):
     print("Training complete.")
     
     if cfg.check.test_score and cfg.method.mode != 'valid':    
-        x_test, y_test, test_cond, test_cluster, test_seq, test_name = llps.extract(cfg.data.test_file, seq_length_min=cfg.data.seq_length_min, feat_type=cfg.method.feat_type, use_cond=True)
+        x_test, y_test, test_cond, test_cluster, test_seq, test_name = llps.extract(cfg.data.test_file, seq_length_min=cfg.data.seq_length_min, feat_type=cfg.method.feat_type, use_cond=True, feat_index_file=feat_index_file)
         merged_feature_test = np.concatenate((x_test, test_cond), axis=1)
         
         evaluation_results = model.evaluate(merged_feature_test, y_test)

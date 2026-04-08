@@ -1,0 +1,133 @@
+method: 
+  feat_type: 't5'  # t5
+  topk: 64        # number of top-k T5 features to use (must match a feature_index_*.txt file)
+  feat_index_file: 'shap_analysis/llpsdb_feature_index_${method.topk}.txt'
+  mode: 'valid'  # [optuna, valid, train]  # find the best hyperparameters with optuna, if false, use the set hyperparameters
+  wandb: True # log the results with wandb
+
+standalone:
+  model_path: 'models/LLPSense_llpsdb_top${method.topk}_shap.pkl'
+  exp_task: 'predict'  # [test, predict, screen, mut, mut_screen]
+  screen: ['conc', 'nacl']  # ['temp', 'conc', 'pH', 'nacl']  # for 3d case or more, ex) ['temp', 'conc'], ['temp', 'conc', 'pH']
+  num_mut: 1
+  mut_direction: 'negative'  # 'positive' or 'negative'
+
+thresholds:
+  nsplits: 5
+  screen: 'temp'
+  test_file: 'data/processed/LLPSDB_threshold.npz'
+
+model:
+  n_estimators: 981
+  max_depth: 14
+  random_state: 42
+  lr: 0.016190312441242166
+  mcw: 3
+  col: 0.5009759370302288
+  sub: 0.8200198388441623
+  gamma: 0.0009561624169944533
+  reg_lambda: 0.002473126880797946
+  reg_alpha: 0.01502383899392206
+  device: 'cuda:0'
+
+data:
+  train_file: 'data/processed/Dataset_LLPSense.npz'
+  test_file: 'data/processed/A_IDP.npz'
+  screen_file: 'data/processed/HSL_mut.npz'
+  mut_file: 'data/processed/HSL.npz'
+  seq_length_min: 0 # minimum sequence length
+  apply_smooth: True
+  smoothing_window: 15
+
+check:
+  test_score: False # check the test score and save scores in the result file (output/results/Pred_Prob_expname.xlxs)
+  save_model: True # save the model (output/models/XGmodel_expname.pkl)
+  irregular: False # check the irregularity of the data (screen)
+  feature_importance: False
+
+expname: 'default'
+
+
+# topk=512
+# model:
+#   n_estimators: 572
+#   max_depth: 14
+#   random_state: 42
+#   lr: 0.015190731596113463
+#   mcw: 2
+#   col: 0.6238590913117747
+#   sub: 0.8563711732769983
+#   gamma: 0.040205312927524925
+#   reg_lambda: 0.9744491432546045
+#   reg_alpha: 0.006510805807236753
+#   device: 'cuda:0'
+
+# topk=256
+# model:
+#   n_estimators: 964
+#   max_depth: 20
+#   random_state: 42
+#   lr: 0.013975302814637526
+#   mcw: 1
+#   col: 0.5472211978759183
+#   sub: 0.6959906238614821
+#   gamma: 0.00011937465863171239
+#   reg_lambda: 0.0026320527376981428
+#   reg_alpha: 2.1372802643965934e-05
+#   device: 'cuda:0'
+
+# topk=128
+# model:
+#   n_estimators: 554
+#   max_depth: 19
+#   random_state: 42
+#   lr: 0.06345041771160304
+#   mcw: 10
+#   col: 0.5276963624906611
+#   sub: 0.5773162553229608
+#   gamma: 0.006075098480352
+#   reg_lambda: 0.026301172861280243
+#   reg_alpha: 2.185823744188357e-05
+#   device: 'cuda:0'
+
+# topk=64
+# model:
+#   n_estimators: 981
+#   max_depth: 14
+#   random_state: 42
+#   lr: 0.016190312441242166
+#   mcw: 3
+#   col: 0.5009759370302288
+#   sub: 0.8200198388441623
+#   gamma: 0.0009561624169944533
+#   reg_lambda: 0.002473126880797946
+#   reg_alpha: 0.01502383899392206
+#   device: 'cuda:0'
+
+# topk=32
+# model:
+#   n_estimators: 374
+#   max_depth: 12
+#   random_state: 42
+#   lr: 0.07906867074201979
+#   mcw: 10
+#   col: 0.5000046784477177
+#   sub: 0.565535571666968
+#   gamma: 0.0007902092400726109
+#   reg_lambda: 4.848851775180711e-05
+#   reg_alpha: 0.3004283705912866
+#   device: 'cuda:0'
+
+# topk=16
+# model:
+#   n_estimators: 831
+#   max_depth: 11
+#   random_state: 42
+#   lr: 0.038847720108041536
+#   mcw: 1
+#   col: 0.7116865303229256
+#   sub: 0.57063942286909
+#   gamma: 0.00020162557657487658
+#   reg_lambda: 0.1370279123522952
+#   reg_alpha: 8.799820451826824e-05
+#   device: 'cuda:0'

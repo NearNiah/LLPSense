@@ -1,0 +1,36 @@
+method: 
+  feat_type: 't5'  # [t5, eng]
+  mode: 'optuna'  # [optuna, valid, train]  # find the best hyperparameters with optuna, if false, use the set hyperparameters
+  wandb: True # log the results with wandb
+
+standalone:
+  model_path: 'models/LLPSeq_full.pkl'
+
+model:
+  n_estimators: 955
+  max_depth: 18
+  random_state: 42
+  lr: 0.010162355654438971
+  mcw: 10
+  col: 0.7634222471551401
+  sub: 0.739215234108803
+  gamma: 0.0001061963862001078
+  reg_lambda: 0.17090008588012273
+  reg_alpha: 1.9088635768956782e-05
+  weight: true
+  device: 'cuda'
+
+data:
+  train_file: 'data/processed/PSPire_train_full.npz'
+  test_file1: 'data/processed/PSPire_test_ID.npz'  # will be used in standalone
+  test_file2: 'data/processed/PSPire_test_noID.npz'
+  seq_length_min: 0 # minimum sequence length
+
+check:
+  test_score: True # check the test score and save scores in the result file (output/results/Pred_Prob_expname.xlxs)
+  save_model: False # save the model (output/models/XGmodel_expname.pkl)
+
+expname: 'default'
+
+
+

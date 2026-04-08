@@ -26,7 +26,7 @@ model:
   gamma: 0.0012682360748828933
   reg_lambda: 0.3024802937837069
   reg_alpha: 0.04238171400820899
-  device: 'cuda:1'
+  device: 'cuda:0'
 
 data:
   train_file: 'data/processed/Dataset_LLPSense.npz'
