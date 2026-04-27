@@ -255,7 +255,7 @@ python LLPSense_standalone.py --config-name=LLPSense_llpsdb_topk standalone.exp_
 # Evaluate LLPSeq (Engineered Features)
 python train_LLPSeq.py --config-name LLPSeq_eng method.mode=train
 
-# Evaluate LLPSeq (LM-based Features)
+# Evaluate LLPSeq (pLM-based Features)
 python train_LLPSeq.py --config-name LLPSeq method.mode=train
 ```
 
@@ -286,7 +286,7 @@ python train_LLPSense.py method.mode=optuna
 # Train LLPSeq (Engineered Features)
 python train_LLPSeq.py --config-name LLPSeq_eng method.mode=optuna check.save_model=True
 
-# Train LLPSeq (LM-based Features)
+# Train LLPSeq (pLM-based Features)
 python train_LLPSeq.py --config-name LLPSeq method.mode=optuna check.save_model=True
 ```
 
