@@ -261,10 +261,10 @@ python train_LLPSeq.py --config-name LLPSeq method.mode=train
 
 #### B. Predict LLPS Probability
 ```bash
-# Evaluate LLPSeq (pLM-based Features, trained with training dataset)
+# Predict with LLPSeq (pLM-based Features, trained with training dataset)
 python LLPSeq_standalone.py --config-name LLPSeq data.test_file1=data/processed/Data_template.npz
 
-# Evaluate LLPSeq (pLM-based Features, trained with full dataset)
+# Predict with LLPSeq_full (pLM-based Features, trained with full dataset)
 python LLPSeq_standalone.py --config-name LLPSeq_full data.test_file1=data/processed/Data_template.npz
 ```
 
