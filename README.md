@@ -6,7 +6,7 @@ This is the official implementation of the paper **"A machine learning framework
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![bioRxiv](https://img.shields.io/badge/bioRxiv-2025.12.28.696755-b31b1b.svg)](https://doi.org/10.64898/2025.12.28.696755)
 
 **Authors:**
-Jangwon Bae<sup>†</sup>, Minjun Kang<sup>†</sup>, Donghyuk Lee, Kuk-Jin Yoon<sup>\*</sup>, and Yongwon Jung<sup>\*</sup>
+Jangwon Bae<sup>†\*</sup>, Minjun Kang<sup>†</sup>, Donghyuk Lee, Kuk-Jin Yoon<sup>\*</sup>, and Yongwon Jung<sup>\*</sup>
 
 <sup>†</sup> These authors contributed equally to this work.  
 <sup>\*</sup> Corresponding authors.
