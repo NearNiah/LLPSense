@@ -72,7 +72,7 @@ pip install -r requirements.txt
 
 ---
 
-## ▶️ Quick Start (CLI Run)
+## ▶️ Quick Start
 We provide preprocessed features for **α-synuclein**, including our LLPS-modulated variants and pathogenic variants with LLPS propensity confirmed in the literature.
 
 ### Instruction
