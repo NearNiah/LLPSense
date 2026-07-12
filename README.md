@@ -157,6 +157,11 @@ python -m preprocess.extract_feat --feature_type=eng --srcfilename=Data_template
 
 ## 🚀 Usage
 
+<details>
+<summary><b>Click to expand — full usage guide (Prediction, Screening, Mutation, SHAP)</b></summary>
+
+<br>
+
 ### 1. LLPSense (Sequence + Condition)
 **LLPSense** predicts LLPS propensity given a **protein sequence** under **specific environmental conditions**.
 
@@ -164,7 +169,7 @@ python -m preprocess.extract_feat --feature_type=eng --srcfilename=Data_template
 * `standalone.exp_task`: Task mode (default: `predict`; options: `test`, `screen`, `mut`, `mut_screen`).
 * `data.test_file` / `data.screen_file` / `data.mut_file`: Path to the `.npz` file generated in the Data Preparation step (usually in `data/processed`).
 * `expname`: Name of the experiment (defines the output directory; default: `default`).
-  
+
 #### A. Evaluate Model Performance
 Predicts scores for labeled data and calculates performance metrics. We used this function to evaluate our model's performance.
 ```bash
@@ -269,6 +274,8 @@ python LLPSeq_standalone.py --config-name LLPSeq data.test_file1=data/processed/
 # Predict with LLPSeq_full (pLM-based Features, trained with full dataset)
 python LLPSeq_standalone.py --config-name LLPSeq_full data.test_file1=data/processed/Data_template.npz
 ```
+
+</details>
 
 ---
 
