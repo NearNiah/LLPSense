@@ -38,6 +38,10 @@ The computational requirements for LLPSense depend on whether you are extracting
 * Feature Extraction (ProtT5): To process protein sequences up to 3,000 AA in length, an NVIDIA GPU with at least 16GB VRAM is recommended. (approx. 100 ms/protein on RTX A6000, varies depending on the protein length)
 
 * Inference: Once features are extracted, the LLPSense model is highly efficient and can run on consumer-grade GPUs (< 8GB VRAM) or even on a CPU. (34 ms/condition on RTX A6000, benchmarked on the human proteome)
+<details>
+<summary><b>Click to expand — Docker setup & install commands</b></summary>
+
+<br>
 
 ```bash
 # 1. Pull the base image
@@ -63,6 +67,8 @@ cd LLPSense
 # 5. Install Python requirements
 pip install -r requirements.txt
 ```
+
+</details>
 
 ---
 
