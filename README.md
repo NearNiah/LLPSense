@@ -94,6 +94,11 @@ Runtime primarily depends on CPU/GPU speed, disk I/O, and whether additional mod
 
 To apply the model to your own proteins, you need to format the sequences and experimental conditions, followed by feature extraction.
 
+<details>
+<summary><b>Click to expand — file formatting & preprocessing</b></summary>
+
+<br>
+
 ### 1. File Formatting
 Prepare an Excel file (`.xlsx`) containing the fields below and place it in `data/raw`.
 An example template is provided: [Data_template.xlsx](data/raw/Data_template.xlsx).
@@ -119,7 +124,6 @@ An example template is provided: [Data_template.xlsx](data/raw/Data_template.xls
 | **cluster/group** | Cluster ID for data splitting/evaluation | - |
 
 > **Note:** `label` and `cluster/group` are only required for training or evaluation tasks. For prediction on new proteins, these columns can be left empty.
-
 
 ### 2. Preprocessing
 Run the following scripts to process the raw file and extract features.
@@ -152,6 +156,8 @@ For Engineered features:
 python -m preprocess.extract_feat --feature_type=eng --srcfilename=Data_template.npz 
 ```
 *See [preprocess/extract_feat.py](preprocess/extract_feat.py) for implementation details.*
+
+</details>
 
 ---
 
