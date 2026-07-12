@@ -31,7 +31,7 @@ Collectively, LLPSense provides a robust computational tool for interrogating th
 
 We highly recommend using Docker to set up the environment. For Windows users, WSL2 (Windows Subsystem for Linux) is supported and recommended for running Docker. Please ensure that Docker (and WSL2 for Windows users) is installed and configured before proceeding with the steps below. Our code has been tested on Ubuntu 22.04.3 LTS (Python 3.10.14, CUDA 11.8). No separate installation is required for LLPSense itself; the setup involves preparing the environment and dependencies, which typically takes under an hour.
 
-#### System Requirements and time consumption
+### System Requirements and time consumption
 The computational requirements for LLPSense depend on whether you are extracting features or running inference:
 
 * Feature Extraction (ProtT5): To process protein sequences up to 3,000 AA in length, an NVIDIA GPU with at least 16GB VRAM is recommended. (approx. 100 ms/protein on RTX A6000, varies depending on the protein length)
