@@ -288,6 +288,11 @@ python LLPSeq_standalone.py --config-name LLPSeq_full data.test_file1=data/proce
 ## ⚡ Training
 We use [Optuna](https://optuna.org/) for hyperparameter optimization and training.
 
+<details>
+<summary><b>Click to expand — LLPSense & LLPSeq training</b></summary>
+
+<br>
+
 ### 1. LLPSense Model
 **Key Arguments:**
 * `data.train_file`: Path to the processed training dataset. For reproducibility, we provide `Dataset_LLPSense.npz` in `data/processed`.
@@ -313,6 +318,8 @@ python train_LLPSeq.py --config-name LLPSeq_eng method.mode=optuna check.save_mo
 # Train LLPSeq (pLM-based Features)
 python train_LLPSeq.py --config-name LLPSeq method.mode=optuna check.save_model=True
 ```
+
+</details>
 
 ---
 
