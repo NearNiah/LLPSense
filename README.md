@@ -23,6 +23,8 @@ Here, we present **LLPSense**, a machine-learning framework that integrates pre-
 
 Collectively, LLPSense provides a robust computational tool for interrogating the condition-dependent landscape of protein phase separation, enabling mechanistic studies of disease-associated phase separation as well as the rational design of programmable condensates.
 
+> 🤗 **Try interactive demo in your browser** — no setup required: [Hugging Face Space](https://huggingface.co/spaces/HugMinjun/LLPSense)
+
 ---
 
 ## ⚙️ Installation
@@ -64,9 +66,8 @@ pip install -r requirements.txt
 
 ---
 
-## ▶️ Quick Start
+## ▶️ Quick Start (CLI Run)
 We provide preprocessed features for **α-synuclein**, including our LLPS-modulated variants and pathogenic variants with LLPS propensity confirmed in the literature.
-> 🤗 **No installation required!** Try LLPSense in your browser via [Hugging Face Space](https://huggingface.co/spaces/HugMinjun/LLPSense).
 
 ### Instruction
 Running the command below will generate a prediction spreadsheet.
