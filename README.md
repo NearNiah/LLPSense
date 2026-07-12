@@ -23,7 +23,8 @@ Here, we present **LLPSense**, a machine-learning framework that integrates pre-
 
 Collectively, LLPSense provides a robust computational tool for interrogating the condition-dependent landscape of protein phase separation, enabling mechanistic studies of disease-associated phase separation as well as the rational design of programmable condensates.
 
-> 🤗 **Try interactive demo in your browser** — no setup required: [Hugging Face Space](https://huggingface.co/spaces/HugMinjun/LLPSense)
+> 🤗 **Try LLPSense in your browser — no setup required.**  
+> [![HF Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Spaces-LLPSense-yellow.svg)](https://huggingface.co/spaces/HugMinjun/LLPSense)
 
 ---
 
