@@ -64,8 +64,9 @@ pip install -r requirements.txt
 
 ---
 
-## ▶️ Quick Start (Demo)
+## ▶️ Quick Start
 We provide preprocessed features for **α-synuclein**, including our LLPS-modulated variants and pathogenic variants with LLPS propensity confirmed in the literature.
+> 🤗 **No installation required!** Try LLPSense in your browser via [Hugging Face Space](https://huggingface.co/spaces/HugMinjun/LLPSense).
 
 ### Instruction
 Running the command below will generate a prediction spreadsheet.
