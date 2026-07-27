@@ -1,4 +1,4 @@
-# A machine learning framework for predicting and modulating condition-dependent protein phase separation (Nature Communications, Accepted 21st July 2026)
+# A machine learning framework for predicting and modulating condition-dependent protein phase separation (Nature Communications, 21st July 2026)
 
 This is the official implementation of the paper **"A machine learning framework for predicting and modulating condition-dependent protein phase separation"**.
 <br>A preprint version of our paper is available on bioRxiv.
