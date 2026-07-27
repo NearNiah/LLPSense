@@ -33,18 +33,25 @@ def main(args):
     if feature_type == 't5':
         module = importlib.import_module(f'preprocess.embedding.t5')
         class_name = 'ProtT5Embedder'
+        model = getattr(module, class_name)(name=feature_type, device=device)
     elif feature_type == 't5_seq':
         module = importlib.import_module(f'preprocess.embedding.t5_seq')
         class_name = 'ProtT5Embedder'
+        model = getattr(module, class_name)(name=feature_type, device=device)
     elif feature_type == 'eng':
         module = importlib.import_module(f'preprocess.embedding.eng')
         class_name = 'EngFeat'
+        model = getattr(module, class_name)(name=feature_type, device=device)
     elif feature_type == 'esm':
         module = importlib.import_module(f'preprocess.embedding.esm')
         class_name = 'ESMEmbedder'
+        model = getattr(module, class_name)(name=feature_type, device=device)
+    elif feature_type in ['esmc_h', 'esmc_m', 'esmc_s']:
+        module = importlib.import_module(f'preprocess.embedding.esmc')
+        class_name = 'ESMCEmbedder'
+        model = getattr(module, class_name)(base_model=feature_type)
     else:
         raise NotImplementedError(f'feature type not found: {feature_type}')
-    model = getattr(module, class_name)(name=feature_type, device=device)
 
     # extract feature
     data = np.load(input_path, allow_pickle=True)['data']
@@ -68,6 +75,7 @@ if __name__ == '__main__':
     # parsing arguments
     parser = argparse.ArgumentParser(description='Configuration')
     parser.add_argument('--device', type=str, default='cuda:0', help='device')
+    # --feature_type 에 esmc_h, esmc_m, esmc_s 를 입력하여 실행 가능합니다.
     parser.add_argument('--feature_type', type=str, default='t5', help='feature to extract')
     parser.add_argument('--srcfilename', type=str, default='pspire_train.npz', help='source filename')
     args = parser.parse_args()
