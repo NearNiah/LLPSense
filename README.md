@@ -347,8 +347,10 @@ If you find this project useful for your research, please consider citing our pa
 
 [![Nature Communications](https://img.shields.io/badge/Nature%20Communications-2026-006C67.svg)](https://doi.org/10.1038/s41467-026-76248-2)
 
-```bibtex
 
+
+```bibtex
+Bae, J., Kang, M., Lee, D. et al. A machine learning framework for predicting and modulating condition-dependent protein phase separation. Nat Commun (2026).
 ```
 
 ---
