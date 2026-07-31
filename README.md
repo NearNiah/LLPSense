@@ -1,4 +1,4 @@
-# A machine learning framework for predicting and modulating condition-dependent protein phase separation (Nature Communications, 31 July 2026)
+# A machine learning framework for predicting and modulating condition-dependent protein phase separation
 
 This is the official implementation of the paper **"A machine learning framework for predicting and modulating condition-dependent protein phase separation"**.
 
@@ -345,15 +345,10 @@ python train_LLPSeq.py --config-name LLPSeq method.mode=optuna check.save_model=
 ## ⭐ Citation
 If you find this project useful for your research, please consider citing our paper:
 
+[![Nature Communications](https://img.shields.io/badge/Nature%20Communications-2026-006C67.svg)](https://doi.org/10.1038/s41467-026-76248-2)
+
 ```bibtex
-@article{bae2025machine,
-  title={A machine learning framework for predicting and modulating condition-dependent protein phase separation},
-  author={Bae, Jangwon and Kang, Minjun and Lee, Donghyuk and Yoon, Kuk-Jin and Jung, Yongwon},
-  journal={bioRxiv},
-  pages={2025--12},
-  year={2025},
-  publisher={Cold Spring Harbor Laboratory}
-}
+
 ```
 
 ---
