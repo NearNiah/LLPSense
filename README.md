@@ -4,7 +4,6 @@ This is the official implementation of the paper **"A machine learning framework
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Nature Communications](https://img.shields.io/badge/Nature%20Communications-2026-006C67.svg)](https://doi.org/10.1038/s41467-026-76248-2)
-[![bioRxiv](https://img.shields.io/badge/bioRxiv-2025.12.28.696755-b31b1b.svg)](https://doi.org/10.64898/2025.12.28.696755)
 [![HF Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Spaces-LLPSense-yellow.svg)](https://huggingface.co/spaces/HugMinjun/LLPSense)
 
 **Authors:**
