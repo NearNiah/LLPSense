@@ -350,7 +350,13 @@ If you find this project useful for your research, please consider citing our pa
 
 
 ```bibtex
-Bae, J., Kang, M., Lee, D. et al. A machine learning framework for predicting and modulating condition-dependent protein phase separation. Nat Commun (2026).
+@article{bae2026machine,
+  title={A machine learning framework for predicting and modulating condition-dependent protein phase separation},
+  author={Bae, Jangwon and Kang, Minjun and Lee, Donghyuk and Yoon, Kuk-Jin and Jung, Yongwon},
+  journal={Nature Communications},
+  year={2026},
+  publisher={Nature Publishing Group UK London}
+}
 ```
 
 ---
